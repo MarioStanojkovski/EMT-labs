@@ -55,13 +55,14 @@ public class BookApplicationServiceImpl implements BookApplicationService {
 
     @Override
     public Optional<DisplayBookDto> deleteById(Long id) {
+
         return bookService.deleteById(id).map(DisplayBookDto::from);
     }
 
-    @Override
-    public Optional<DisplayBookDto> rent(Long id) {
-        return bookService.rent(id).map(DisplayBookDto::from);
-    }
+//    @Override
+//    public Optional<DisplayBookDto> rent(Long id) {
+//        return bookService.rent(id).map(DisplayBookDto::from);
+//    }
 
     @Override
     public List<DisplayBookDto> findByCategory(Category category) {

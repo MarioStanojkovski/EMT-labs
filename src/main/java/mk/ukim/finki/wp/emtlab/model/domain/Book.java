@@ -28,29 +28,26 @@ public class Book extends BaseAuditableEntity{
     @JoinColumn(name = "author_id", nullable = false)
     private Author author;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private State state;
 
-    @Column(nullable = false)
-    private Integer availableCopies;
+//
+//    @Column(nullable = false)
+//    private Integer availableCopies;
 
-    public Book(String name, Category category, Author author,State state ,Integer availableCopies) {
+    public Book(String name, Category category, Author author) {
         this.name = name;
         this.category = category;
         this.author = author;
-        this.state = state;
-        this.availableCopies = availableCopies;
+//        this.state = state;
         this.deleted=false;
     }
 
-    public State getState() {
-        return state;
-    }
-
-    public void setState(State state) {
-        this.state = state;
-    }
+//    public State getState() {
+//        return state;
+//    }
+//
+//    public void setState(State state) {
+//        this.state = state;
+//    }
 
     public String getName() {
         return name;
@@ -76,11 +73,11 @@ public class Book extends BaseAuditableEntity{
         this.author = author;
     }
 
-    public Integer getAvailableCopies() {
-        return availableCopies;
-    }
+//    public Integer getAvailableCopies() {
+//        return availableCopies;
+//    }
 
-    public void setAvailableCopies(Integer availableCopies) {
-        this.availableCopies = availableCopies;
-    }
+//    public void setAvailableCopies(Integer availableCopies) {
+//        this.availableCopies = availableCopies;
+//    }
 }

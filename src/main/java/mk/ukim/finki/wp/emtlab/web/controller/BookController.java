@@ -59,11 +59,11 @@ public class BookController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/{id}/rent")
-    public ResponseEntity<DisplayBookDto> rent(@PathVariable Long id) {
-        return bookApplicationService.rent(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+//    @PutMapping("/{id}/rent")
+//    public ResponseEntity<DisplayBookDto> rent(@PathVariable Long id) {
+//        return bookApplicationService.rent(id)
+//                .map(ResponseEntity::ok)
+//                .orElseGet(() -> ResponseEntity.notFound().build());
+//    }
 }
 

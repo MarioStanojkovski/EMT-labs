@@ -18,7 +18,7 @@ public interface BookApplicationService {
 
     Optional<DisplayBookDto> deleteById(Long id);
 
-    Optional<DisplayBookDto> rent(Long id);
+//    Optional<DisplayBookDto> rent(Long id);
 
     List<DisplayBookDto>findByCategory(Category category);
 }

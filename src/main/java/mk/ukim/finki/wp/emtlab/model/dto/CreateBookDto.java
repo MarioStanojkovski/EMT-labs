@@ -18,18 +18,18 @@ public record CreateBookDto(
     Category category,
 
     @NotNull(message = "Author is required")
-    Long authorId,
+    Long authorId
 
-    @NotNull(message = "State is required")
-    State state,
+//    @NotNull(message = "State is required")
+//    State state
 
-    @NotNull(message = "Available copies are required")
-    @Min(value = 0, message = "Available copies cannot be negative")
-    Integer availableCopies
+//    @NotNull(message = "Available copies are required")
+//    @Min(value = 0, message = "Available copies cannot be negative")
+//    Integer availableCopies
 ) {
 
     public Book toBook(Author author) {
-        return new Book(name,category,author,state,availableCopies);
+        return new Book(name,category,author);
     }
 
 }

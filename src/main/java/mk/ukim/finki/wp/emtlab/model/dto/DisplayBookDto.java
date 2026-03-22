@@ -10,9 +10,9 @@ public record DisplayBookDto(
         Long id,
         String name,
         Category category,
-        String authorName,
-        State state,
-        Integer avaliableCopies
+        String authorName
+//        State state
+//        Integer avaliableCopies
 
 ) {
 
@@ -21,9 +21,9 @@ public record DisplayBookDto(
                 book.getId(),
                 book.getName(),
                 book.getCategory(),
-                book.getAuthor().getName() + " " + book.getAuthor().getSurname(),
-                book.getState(),
-                book.getAvailableCopies()
+                book.getAuthor().getName() + " " + book.getAuthor().getSurname()
+//                book.getState()
+//                book.getAvailableCopies()
         );
     }
 
