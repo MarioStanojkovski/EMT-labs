@@ -9,9 +9,11 @@ import mk.ukim.finki.wp.emtlab.model.projection.BookDetailedProjection;
 import mk.ukim.finki.wp.emtlab.model.projection.BookSummaryProjection;
 import mk.ukim.finki.wp.emtlab.service.application.BookApplicationService;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -22,7 +24,11 @@ public class BookController {
     public BookController(BookApplicationService bookApplicationService) {
         this.bookApplicationService = bookApplicationService;
     }
-
+    @GetMapping("/top_10_by_date_published")
+    public ResponseEntity<List<DisplayBookDto>> findTop10ByDate(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime localDateTime) {
+        return ResponseEntity.ok(bookApplicationService.findTop10ByDate(localDateTime));
+    }
     @GetMapping
     public ResponseEntity<List<DisplayBookDto>> findAll() {
         return ResponseEntity.ok(bookApplicationService.findAll());

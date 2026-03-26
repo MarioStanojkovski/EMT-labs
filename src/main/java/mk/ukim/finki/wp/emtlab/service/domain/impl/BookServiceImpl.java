@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -110,6 +111,12 @@ public class BookServiceImpl implements BookService {
                             return book;
                         }));
     }
+
+    @Override
+    public List<Book> findTop10ByDate(LocalDateTime localDateTime) {
+        return bookRepository.findFirst10ByDatePublishedBefore(localDateTime);
+    }
+
     @Override
     public Page<BookDetailedProjection> findAllDetailed(int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));

@@ -8,10 +8,12 @@ import mk.ukim.finki.wp.emtlab.model.projection.BookDetailedProjection;
 import mk.ukim.finki.wp.emtlab.model.projection.BookSummaryProjection;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 public interface BookApplicationService {
+        List<DisplayBookDto>findTop10ByDate(LocalDateTime localDateTime);
         List<DisplayBookDto> findAll();
         Optional<DisplayBookDto> findById(Long id);
         DisplayBookDto create(CreateBookDto createBookDTO);

@@ -13,6 +13,7 @@ import mk.ukim.finki.wp.emtlab.service.domain.BookService;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +35,11 @@ public class BookApplicationServiceImpl implements BookApplicationService {
     @Override
     public Optional<DisplayBookDto> findById(Long id) {
         return bookService.findById(id).map(DisplayBookDto::from);
+    }
+
+    @Override
+    public List<DisplayBookDto> findTop10ByDate(LocalDateTime localDateTime) {
+        return DisplayBookDto.from(bookService.findTop10ByDate(localDateTime));
     }
 
     @Override

@@ -9,10 +9,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-//@Slf4j
+@Slf4j
 public class MaterializedViewRefreshScheduler {
 
-    private final Logger logger = LoggerFactory.getLogger(MaterializedViewRefreshScheduler.class);
+   // private final Logger logger = LoggerFactory.getLogger(MaterializedViewRefreshScheduler.class);
 
     private final BookCategoryStatsViewRepository bookCategoryStatsViewRepository;
 

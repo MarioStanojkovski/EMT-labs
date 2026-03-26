@@ -7,6 +7,9 @@ import lombok.Setter;
 import mk.ukim.finki.wp.emtlab.model.enums.Category;
 import mk.ukim.finki.wp.emtlab.model.enums.State;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 
 @Entity
 @Getter
@@ -32,12 +35,15 @@ public class Book extends BaseAuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
     private Author author;
+    private LocalDateTime date_published;
+    //findallbydatepublishedbeforetop10
 
-    public Book(String name, Category category, State state, Author author) {
+    public Book(String name, Category category, State state,LocalDateTime date_published, Author author) {
         this.name = name;
         this.category = category;
         this.state = state;
         this.author = author;
         this.deleted = false;
+        this.date_published=date_published;
     }
 }

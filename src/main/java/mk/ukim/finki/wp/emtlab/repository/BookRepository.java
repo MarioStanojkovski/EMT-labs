@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,9 @@ import java.util.Optional;
 public interface BookRepository extends JpaRepository<Book, Long> {
 
     List<Book> findAllByDeletedFalse();
+
+    @Query("SELECT b FROM Book b WHERE b.date_published < :date ORDER BY b.date_published DESC LIMIT 10")
+    List<Book> findFirst10ByDatePublishedBefore(LocalDateTime date);
 
     Optional<Book> findByIdAndDeletedFalse(Long id);
 

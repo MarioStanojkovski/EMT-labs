@@ -4,15 +4,16 @@ import mk.ukim.finki.wp.emtlab.model.domain.Book;
 import mk.ukim.finki.wp.emtlab.model.enums.Category;
 import mk.ukim.finki.wp.emtlab.model.enums.State;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record DisplayBookDto(
         Long id,
         String name,
         Category category,
-        String authorName
-//        State state
-//        Integer avaliableCopies
+        String authorName,
+        LocalDateTime date_published
 
 ) {
 
@@ -21,9 +22,8 @@ public record DisplayBookDto(
                 book.getId(),
                 book.getName(),
                 book.getCategory(),
-                book.getAuthor().getName() + " " + book.getAuthor().getSurname()
-//                book.getState()
-//                book.getAvailableCopies()
+                book.getAuthor().getName() + " " + book.getAuthor().getSurname(),
+                book.getDate_published()
         );
     }
 
