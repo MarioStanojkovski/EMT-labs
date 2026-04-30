@@ -1,0 +1,1 @@
+ALTER TABLE book_copy ADD COLUMN rented_by_user_id BIGINT;
