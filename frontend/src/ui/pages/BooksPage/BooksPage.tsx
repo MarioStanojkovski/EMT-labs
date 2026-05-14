@@ -1,59 +1,71 @@
-import { useState, useEffect } from 'react';
-import {
-    Container, Grid, Typography, CircularProgress, Alert,
-    Button, FormControl, InputLabel, Select, MenuItem, Box
-} from '@mui/material';
-import { useBooks } from '../../../hooks/useBooks.ts';
-import BookCard from '../../components/BookCard/BookCard.tsx';
-import bookApi from '../../../api/bookApis.ts';
+import useBooks from '../../../hooks/useBooks.ts';
+import useWishList from '../../../hooks/useWishList.ts';
+import { Alert, Box, Button, CircularProgress, Snackbar } from '@mui/material';
+import BookGrid from '../../components/Book/BookGrid/BookGrid.tsx';
+import { useState } from 'react';
+import AddBookDialog from '../../components/Book/AddBookDialog/AddBookDialog.tsx';
+import type { BookFormData } from '../../../api/types/book.ts';
+import useAuth from '../../../hooks/useAuth.ts';
 
 const BooksPage = () => {
-    const [states, setStates] = useState<string[]>([]);
-    const [selected, setSelected] = useState<string>('');
-    const [stateFilter, setStateFilter] = useState<string | undefined>(undefined);
-    const { books, loading, error } = useBooks(stateFilter);
+    const { user } = useAuth();
+    const isAdmin = user?.roles.includes('ROLE_ADMINISTRATOR') ?? false;
 
-    useEffect(() => {
-        bookApi.getStates().then(res => setStates(res.data));
-    }, []);
+    const { books, loading, onAdd, onEdit, onDelete } = useBooks();
+    const { onAddBook } = useWishList();
 
-    const handleSearch = () => {
-        setStateFilter(selected || undefined);
+    const [addDialogOpen, setAddDialogOpen] = useState<boolean>(false);
+
+    const [snackbar, setSnackbar] = useState<{ open: boolean; message: string }>({
+        open: false,
+        message: ''
+    });
+
+    const handleAdd = async (data: BookFormData) => {
+        try {
+            await onAdd(data);
+        } catch (err) {
+            setSnackbar({
+                open: true,
+                message: err instanceof Error ? err.message : 'Failed to add book.'
+            });
+        }
     };
 
-    if (error) return <Alert severity='error'>{error}</Alert>;
-
     return (
-        <Container>
-            <Typography variant='h4' gutterBottom>Books</Typography>
-            <Box sx={{ display: 'flex', gap: 2, mb: 3, alignItems: 'center' }}>
-                <FormControl size='small' sx={{ minWidth: 160 }}>
-                    <InputLabel>State</InputLabel>
-                    <Select
-                        value={selected}
-                        label='State'
-                        onChange={e => setSelected(e.target.value)}
-                    >
-                        <MenuItem value=''>All</MenuItem>
-                        {states.map(s => (
-                            <MenuItem key={s} value={s}>{s}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-                <Button variant='contained' onClick={handleSearch}>Search</Button>
-            </Box>
-            {loading ? (
-                <CircularProgress sx={{ display: 'block', mx: 'auto', mt: 4 }} />
-            ) : (
-                <Grid container spacing={3}>
-                    {books.map(book => (
-                        <Grid item xs={12} sm={6} md={4} key={book.id}>
-                            <BookCard book={book} />
-                        </Grid>
-                    ))}
-                </Grid>
+        <Box>
+            {loading && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                    <CircularProgress />
+                </Box>
             )}
-        </Container>
+            {!loading &&
+                <>
+                    {isAdmin && (
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+                        <Button variant='contained' color='primary' onClick={() => setAddDialogOpen(true)}>
+                            Add Book
+                        </Button>
+                    </Box>
+                    )}
+                    <BookGrid books={books} onEdit={onEdit} onDelete={onDelete} onAddToCart={onAddBook} />
+                    <Snackbar
+                        open={snackbar.open}
+                        autoHideDuration={3000}
+                        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    >
+                        <Alert severity='error' onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}>
+                            {snackbar.message}
+                        </Alert>
+                    </Snackbar>
+                    <AddBookDialog
+                        open={addDialogOpen}
+                        onClose={() => setAddDialogOpen(false)}
+                        onAdd={handleAdd}
+                    />
+                </>}
+        </Box>
     );
 };
 

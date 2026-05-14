@@ -22,6 +22,9 @@ public class Book extends BaseAuditableEntity {
     private Boolean deleted = false;
 
     @Column(nullable = false)
+    private Integer available_copies = 0;
+
+    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)

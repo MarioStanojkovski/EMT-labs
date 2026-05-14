@@ -1,24 +1,54 @@
-import { useParams } from 'react-router';
-import { Container, Typography, CircularProgress, Alert, Card, CardContent } from '@mui/material';
 import { useCountry } from '../../../hooks/useCountry.ts';
+import { Link, useNavigate, useParams } from 'react-router';
+import {
+    Box, Breadcrumbs, Button, CircularProgress, Grid, Paper, Stack, Typography
+} from '@mui/material';
+import { ArrowBack } from '@mui/icons-material';
 
 const CountryDetailsPage = () => {
-    const { id } = useParams<{ id: string }>();
-    const { country, loading, error } = useCountry(Number(id));
+    const navigate = useNavigate();
+    const { id } = useParams();
+    const { country } = useCountry(Number(id));
 
-    if (loading) return <CircularProgress sx={{ display: 'block', mx: 'auto', mt: 4 }} />;
-    if (error) return <Alert severity='error'>{error}</Alert>;
-    if (!country) return <Alert severity='warning'>Country not found</Alert>;
+    if (!country) {
+        return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}><CircularProgress /></Box>;
+    }
 
     return (
-        <Container maxWidth='sm' sx={{ mt: 4 }}>
-            <Card>
-                <CardContent>
-                    <Typography variant='h4' gutterBottom>{country.name}</Typography>
-                    <Typography variant='body1'><strong>Continent:</strong> {country.continent}</Typography>
-                </CardContent>
-            </Card>
-        </Container>
+        <Box>
+            <Breadcrumbs aria-label='breadcrumb' sx={{ mb: 3 }}>
+                <Link to='/countries' style={{ textDecoration: 'none', color: 'inherit' }}
+                      onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')}
+                      onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}
+                >
+                    Countries
+                </Link>
+                <Typography color='text.primary'>{country.name}</Typography>
+            </Breadcrumbs>
+
+            <Paper elevation={2} sx={{ p: 4, borderRadius: 4 }}>
+                <Grid container spacing={4}>
+                    <Grid size={{ xs: 12, md: 9 }}>
+                        <Box sx={{ mb: 3 }}>
+                            <Typography variant='h3' gutterBottom sx={{ fontWeight: 600 }}>
+                                {country.name}
+                            </Typography>
+                            <Typography variant='h5' color='text.secondary'>
+                                {country.continent}
+                            </Typography>
+                        </Box>
+                    </Grid>
+
+                    <Grid size={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Stack direction='row' spacing={2}>
+                            <Button variant='outlined' startIcon={<ArrowBack />} onClick={() => navigate('/countries')}>
+                                Back to Countries
+                            </Button>
+                        </Stack>
+                    </Grid>
+                </Grid>
+            </Paper>
+        </Box>
     );
 };
 

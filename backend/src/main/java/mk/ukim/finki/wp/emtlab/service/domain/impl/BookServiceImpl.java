@@ -10,6 +10,7 @@ import mk.ukim.finki.wp.emtlab.model.projection.BookDetailedProjection;
 import mk.ukim.finki.wp.emtlab.model.projection.BookSummaryProjection;
 import mk.ukim.finki.wp.emtlab.repository.BookCopyRepository;
 import mk.ukim.finki.wp.emtlab.repository.BookRepository;
+import mk.ukim.finki.wp.emtlab.repository.WishListRepository;
 import mk.ukim.finki.wp.emtlab.service.domain.BookService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -27,12 +28,14 @@ import java.util.Optional;
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookCopyRepository bookCopyRepository;
+    private final WishListRepository wishListRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     public BookServiceImpl(BookRepository bookRepository, BookCopyRepository bookCopyRepository,
-                           ApplicationEventPublisher eventPublisher) {
+                           WishListRepository wishListRepository, ApplicationEventPublisher eventPublisher) {
         this.bookRepository = bookRepository;
         this.bookCopyRepository = bookCopyRepository;
+        this.wishListRepository = wishListRepository;
         this.eventPublisher = eventPublisher;
     }
 
@@ -65,9 +68,15 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public Optional<Book> deleteById(Long id) {
         return bookRepository.findByIdAndDeletedFalse(id)
                 .map(book -> {
+                    wishListRepository.findAll().forEach(wishList -> {
+                        if (wishList.getBooks().removeIf(b -> b.getId().equals(id))) {
+                            wishListRepository.save(wishList);
+                        }
+                    });
                     book.setDeleted(true);
                     return bookRepository.save(book);
                 });

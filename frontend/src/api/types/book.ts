@@ -8,7 +8,7 @@ export interface Book {
     date_published: string;
 }
 
-export interface UpdateBookDto {
+export interface BookFormData {
     name: string;
     category: string;
     state: string;

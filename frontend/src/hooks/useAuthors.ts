@@ -1,18 +1,46 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import authorApi from '../api/authorApis.ts';
-import type { Author } from '../api/types/author.ts';
+import type { Author, AuthorFormData } from '../api/types/author.ts';
 
-export const useAuthors = () => {
+const useAuthors = () => {
     const [authors, setAuthors] = useState<Author[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<Error | null>(null);
 
-    useEffect(() => {
-        authorApi.findAll()
-            .then(res => setAuthors(res.data))
-            .catch(() => setError('Failed to load authors'))
-            .finally(() => setLoading(false));
+    const fetch = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await authorApi.findAll();
+            setAuthors(response.data);
+        } catch (err) {
+            setError(err instanceof Error ? err : new Error('An unknown error occurred.'));
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
-    return { authors, loading, error };
+    const onAdd = useCallback(async (data: AuthorFormData) => {
+        await authorApi.add(data);
+        await fetch();
+    }, [fetch]);
+
+    const onEdit = useCallback(async (id: number, data: AuthorFormData) => {
+        await authorApi.edit(id.toString(), data);
+        await fetch();
+    }, [fetch]);
+
+    const onDelete = useCallback(async (id: number) => {
+        await authorApi.delete(id.toString());
+        await fetch();
+    }, [fetch]);
+
+    useEffect(() => {
+        void fetch();
+    }, [fetch]);
+
+    return { authors, loading, error, fetch, onAdd, onEdit, onDelete };
 };
+
+export default useAuthors;

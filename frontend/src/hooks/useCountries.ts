@@ -1,18 +1,46 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import countryApi from '../api/countryApis.ts';
-import type { Country } from '../api/types/country.ts';
+import type { Country, CountryFormData } from '../api/types/country.ts';
 
-export const useCountries = () => {
+const useCountries = () => {
     const [countries, setCountries] = useState<Country[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<Error | null>(null);
 
-    useEffect(() => {
-        countryApi.findAll()
-            .then(res => setCountries(res.data))
-            .catch(() => setError('Failed to load countries'))
-            .finally(() => setLoading(false));
+    const fetch = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await countryApi.findAll();
+            setCountries(response.data);
+        } catch (err) {
+            setError(err instanceof Error ? err : new Error('An unknown error occurred.'));
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
-    return { countries, loading, error };
+    const onAdd = useCallback(async (data: CountryFormData) => {
+        await countryApi.add(data);
+        await fetch();
+    }, [fetch]);
+
+    const onEdit = useCallback(async (id: number, data: CountryFormData) => {
+        await countryApi.edit(id.toString(), data);
+        await fetch();
+    }, [fetch]);
+
+    const onDelete = useCallback(async (id: number) => {
+        await countryApi.delete(id.toString());
+        await fetch();
+    }, [fetch]);
+
+    useEffect(() => {
+        void fetch();
+    }, [fetch]);
+
+    return { countries, loading, error, fetch, onAdd, onEdit, onDelete };
 };
+
+export default useCountries;

@@ -6,6 +6,7 @@ public record DisplayAuthorDto(
         Long id,
         String name,
         String surname,
+        Long countryId,
         String countryName
 ) {
     public static DisplayAuthorDto from(Author author) {
@@ -13,6 +14,7 @@ public record DisplayAuthorDto(
                 author.getId(),
                 author.getName(),
                 author.getSurname(),
+                author.getCountry().getId(),
                 author.getCountry().getName()
         );
     }

@@ -2,6 +2,7 @@ package mk.ukim.finki.wp.emtlab.service.domain.impl;
 
 import mk.ukim.finki.wp.emtlab.model.domain.Author;
 import mk.ukim.finki.wp.emtlab.repository.AuthorRepository;
+import mk.ukim.finki.wp.emtlab.repository.BookRepository;
 import mk.ukim.finki.wp.emtlab.service.domain.AuthorService;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +12,11 @@ import java.util.Optional;
 @Service
 public class AuthorServiceImpl implements AuthorService {
     private final AuthorRepository authorRepository;
+    private final BookRepository bookRepository;
 
-    public AuthorServiceImpl(AuthorRepository authorRepository) {
+    public AuthorServiceImpl(AuthorRepository authorRepository, BookRepository bookRepository) {
         this.authorRepository = authorRepository;
+        this.bookRepository = bookRepository;
     }
 
     @Override
@@ -46,6 +49,9 @@ public class AuthorServiceImpl implements AuthorService {
     public Optional<Author> deleteById(Long id) {
         return authorRepository.findById(id)
                 .map(author -> {
+                    bookRepository.findAll().stream()
+                            .filter(book -> book.getAuthor().getId().equals(id))
+                            .forEach(bookRepository::delete);
                     authorRepository.delete(author);
                     return author;
                 });

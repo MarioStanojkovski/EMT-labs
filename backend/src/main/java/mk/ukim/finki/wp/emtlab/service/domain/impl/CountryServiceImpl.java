@@ -1,6 +1,8 @@
 package mk.ukim.finki.wp.emtlab.service.domain.impl;
 
 import mk.ukim.finki.wp.emtlab.model.domain.Country;
+import mk.ukim.finki.wp.emtlab.repository.AuthorRepository;
+import mk.ukim.finki.wp.emtlab.repository.BookRepository;
 import mk.ukim.finki.wp.emtlab.repository.CountryRepository;
 import mk.ukim.finki.wp.emtlab.service.domain.CountryService;
 import org.springframework.stereotype.Service;
@@ -11,9 +13,13 @@ import java.util.Optional;
 @Service
 public class CountryServiceImpl implements CountryService {
     private final CountryRepository countryRepository;
+    private final AuthorRepository authorRepository;
+    private final BookRepository bookRepository;
 
-    public CountryServiceImpl(CountryRepository countryRepository) {
+    public CountryServiceImpl(CountryRepository countryRepository, AuthorRepository authorRepository, BookRepository bookRepository) {
         this.countryRepository = countryRepository;
+        this.authorRepository = authorRepository;
+        this.bookRepository = bookRepository;
     }
 
     @Override
@@ -45,6 +51,14 @@ public class CountryServiceImpl implements CountryService {
     public Optional<Country> deleteById(Long id) {
         return countryRepository.findById(id)
                 .map(country -> {
+                    authorRepository.findAll().stream()
+                            .filter(author -> author.getCountry().getId().equals(id))
+                            .forEach(author -> {
+                                bookRepository.findAll().stream()
+                                        .filter(book -> book.getAuthor().getId().equals(author.getId()))
+                                        .forEach(bookRepository::delete);
+                                authorRepository.delete(author);
+                            });
                     countryRepository.delete(country);
                     return country;
                 });

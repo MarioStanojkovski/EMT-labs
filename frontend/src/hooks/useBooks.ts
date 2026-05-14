@@ -1,23 +1,46 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import bookApi from '../api/bookApis.ts';
-import type { Book } from '../api/types/book.ts';
+import type { Book, BookFormData } from '../api/types/book.ts';
 
-export const useBooks = (stateFilter?: string) => {
+const useBooks = () => {
     const [books, setBooks] = useState<Book[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<Error | null>(null);
+
+    const fetch = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await bookApi.findAll();
+            setBooks(response.data);
+        } catch (err) {
+            setError(err instanceof Error ? err : new Error('An unknown error occurred.'));
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    const onAdd = useCallback(async (data: BookFormData) => {
+        await bookApi.add(data);
+        await fetch();
+    }, [fetch]);
+
+    const onEdit = useCallback(async (id: number, data: BookFormData) => {
+        await bookApi.edit(id.toString(), data);
+        await fetch();
+    }, [fetch]);
+
+    const onDelete = useCallback(async (id: number) => {
+        await bookApi.delete(id.toString());
+        await fetch();
+    }, [fetch]);
 
     useEffect(() => {
-        setLoading(true);
-        const request = stateFilter
-            ? bookApi.filter(stateFilter).then(res => res.data.content)
-            : bookApi.findAll().then(res => res.data);
+        void fetch();
+    }, [fetch]);
 
-        request
-            .then(data => setBooks(data))
-            .catch(() => setError('Failed to load books'))
-            .finally(() => setLoading(false));
-    }, [stateFilter]);
-
-    return { books, loading, error };
+    return { books, loading, error, fetch, onAdd, onEdit, onDelete };
 };
+
+export default useBooks;
