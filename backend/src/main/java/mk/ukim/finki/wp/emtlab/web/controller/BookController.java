@@ -26,6 +26,11 @@ public class BookController {
     public BookController(BookApplicationService bookApplicationService) {
         this.bookApplicationService = bookApplicationService;
     }
+    @GetMapping("/states")
+    public ResponseEntity<State[]> getStates() {
+        return ResponseEntity.ok(State.values());
+    }
+
     @GetMapping("/top_10_by_date_published")
     public ResponseEntity<List<DisplayBookDto>> findTop10ByDate(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime localDateTime) {

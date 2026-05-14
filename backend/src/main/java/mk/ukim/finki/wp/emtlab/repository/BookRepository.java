@@ -37,7 +37,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
         LEFT JOIN b.author a
         WHERE b.deleted = false
         AND (:category IS NULL OR b.category = :category)
-        AND (:state IS NULL OR bc.state = :state)
+        AND (:state IS NULL OR b.state = :state)
         AND (:authorId IS NULL OR a.id = :authorId)
         AND (:available IS NULL OR
             (:available = true AND (SELECT COUNT(c) FROM BookCopy c WHERE c.book = b AND c.rented = false) > 0) OR

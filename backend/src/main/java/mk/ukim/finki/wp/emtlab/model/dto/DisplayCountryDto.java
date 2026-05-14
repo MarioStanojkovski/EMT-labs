@@ -15,3 +15,7 @@ public record DisplayCountryDto(
         );
     }
 }
+//filtriranje na knigi spored state
+// good/bad filter na fronted dodavanje kopce
+// ako e good samo good ako e bad samo bad ako e prazno togash site
+//endpoint

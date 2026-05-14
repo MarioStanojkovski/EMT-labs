@@ -15,6 +15,11 @@ const BookCard = ({ book }: Props) => {
                     <Typography variant='body2' color='text.secondary' gutterBottom>{book.authorName}</Typography>
                     <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
                         <Chip label={book.category} size='small' color='primary' />
+                        <Chip
+                            label={book.state}
+                            size='small'
+                            color={book.state === 'GOOD' ? 'success' : 'error'}
+                        />
                     </Box>
                 </CardContent>
             </CardActionArea>
